@@ -1,9 +1,28 @@
 import React, { useState } from "react";
-import { Text, View, StyleSheet, TextInput } from "react-native";
+import { Text, View, StyleSheet, TextInput, Button } from "react-native";
 
 export default function App() {
-	const [originalPrice, setOriginalPrice] = useState();
-	const [discoutPercentage, setDiscountPercentage] = useState();
+	const [originalPrice, setOriginalPrice] = useState("");
+	const [discoutPercentage, setDiscountPercentage] = useState("");
+	const [total, setTotal] = useState(0);
+	const [discount, setDiscount] = useState(0);
+	const [history, setHistory] = useState([]);
+
+	const calculateHandler = () => {
+		if (originalPrice > 0) {
+			if (discoutPercentage >= 0 && discoutPercentage <= 100) {
+				setTotal(
+					originalPrice -
+						originalPrice * (discoutPercentage / 100).toFixed(2)
+				);
+				setDiscount(originalPrice * (discoutPercentage / 100).toFixed(2));
+			} else {
+				alert("Discount must be in between 0-100");
+			}
+		} else {
+			alert("Original Price must be a number and greater then 0");
+		}
+	};
 
 	return (
 		<View style={styles.container}>
@@ -20,14 +39,12 @@ export default function App() {
 				onChange={(e) => setDiscountPercentage(e.target.value)}
 				placeholder="Discount %"
 			/>
+			<View style={styles.calculateStyles}>
+				<Button title="Calculate" onPress={calculateHandler} />
+			</View>
 			<View style={styles.discountStyles}>
-				<Text style={styles.pricingStyles}>
-					You save: {originalPrice * (discoutPercentage / 100)}${" "}
-				</Text>
-				<Text style={styles.pricingStyles}>
-					Final Price:{" "}
-					{originalPrice - originalPrice * (discoutPercentage / 100)}$
-				</Text>
+				<Text style={styles.pricingStyles}>You save: {discount}$ </Text>
+				<Text style={styles.pricingStyles}>Final Price: {total}$</Text>
 			</View>
 		</View>
 	);
@@ -62,5 +79,10 @@ const styles = StyleSheet.create({
 	pricingStyles: {
 		fontWeight: "bold",
 		fontSize: 15,
+	},
+	calculateStyles: {
+		width: "30%",
+		margin: "auto",
+		marginTop: 10,
 	},
 });
