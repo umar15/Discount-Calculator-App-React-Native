@@ -3,16 +3,32 @@ import { Text, View, StyleSheet, TextInput } from "react-native";
 
 export default function App() {
 	const [originalPrice, setOriginalPrice] = useState();
-	const [discooutPercentage, setDiscountPercentage] = useState();
+	const [discoutPercentage, setDiscountPercentage] = useState();
 
 	return (
 		<View style={styles.container}>
 			<Text style={styles.headerStyles}> Discount Calculator App</Text>
-			<TextInput style={styles.inputStyles} placeholder="Original Price" />
+			<TextInput
+				style={styles.inputStyles}
+				value={originalPrice}
+				onChange={(e) => setOriginalPrice(e.target.value)}
+				placeholder="Original Price"
+			/>
 			<TextInput
 				style={[styles.inputStyles, { marginTop: 5 }]}
+				value={discoutPercentage}
+				onChange={(e) => setDiscountPercentage(e.target.value)}
 				placeholder="Discount %"
 			/>
+			<View style={styles.discountStyles}>
+				<Text style={styles.pricingStyles}>
+					You save: {originalPrice * (discoutPercentage / 100)}${" "}
+				</Text>
+				<Text style={styles.pricingStyles}>
+					Final Price:{" "}
+					{originalPrice - originalPrice * (discoutPercentage / 100)}$
+				</Text>
+			</View>
 		</View>
 	);
 }
@@ -38,5 +54,13 @@ const styles = StyleSheet.create({
 		padding: 5,
 		margin: "auto",
 		borderRadius: 5,
+	},
+	discountStyles: {
+		textAlign: "center",
+		marginTop: 10,
+	},
+	pricingStyles: {
+		fontWeight: "bold",
+		fontSize: 15,
 	},
 });
