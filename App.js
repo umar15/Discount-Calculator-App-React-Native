@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Text, View, StyleSheet, TextInput, Button } from "react-native";
+import { Text, View, StyleSheet, TextInput, Button, Modal } from "react-native";
 
 export default function App() {
 	const [originalPrice, setOriginalPrice] = useState("");
@@ -7,9 +7,10 @@ export default function App() {
 	const [total, setTotal] = useState(0);
 	const [discount, setDiscount] = useState(0);
 	const [history, setHistory] = useState([]);
+	const [modalVisibility, setModalVisibility] = useState(false);
 
 	const calculateHandler = () => {
-		if (originalPrice > 0) {
+		if (originalPrice >= 0) {
 			if (discoutPercentage >= 0 && discoutPercentage <= 100) {
 				setTotal(
 					originalPrice -
@@ -24,9 +25,24 @@ export default function App() {
 		}
 	};
 
+	const saveHandler = () => {
+		const newData = {
+			id: Math.random() * 100000,
+			originalPrice,
+			discoutPercentage,
+			total,
+		};
+		setHistory((history) => [...history, newData]);
+	};
+
+	const seeHistory = () => {
+		setModalVisibility(true);
+		alert(history);
+	};
+
 	return (
 		<View style={styles.container}>
-			<Text style={styles.headerStyles}> Discount Calculator App</Text>
+			<Text style={styles.headerStyles}> Discount Calculator</Text>
 			<TextInput
 				style={styles.inputStyles}
 				value={originalPrice}
@@ -46,13 +62,56 @@ export default function App() {
 				<Text style={styles.pricingStyles}>You save: {discount}$ </Text>
 				<Text style={styles.pricingStyles}>Final Price: {total}$</Text>
 			</View>
+			<View>
+				<View style={styles.calculateStyles}>
+					<Button title="save" onPress={saveHandler} />
+				</View>
+				<View style={styles.calculateStyles}>
+					<Button title="see history" onPress={seeHistory} />
+				</View>
+			</View>
+
+			<Modal visible={modalVisibility}>
+				<View>
+					<View
+						style={{
+							textAlign: "center",
+							fontWeight: "bold",
+							fontSize: 20,
+						}}
+					>
+						Previous History
+					</View>
+					{history.map((hist) => (
+						<View>
+							<View>Original Price: {hist.originalPrice}$</View>
+							<View>Discount Percentage: {hist.discoutPercentage}%</View>
+							<View>Total: {hist.total}$</View>
+						</View>
+					))}
+					<View>
+						<View style={[styles.calculateStyles, { width: "50%" }]}>
+							<Button
+								title="Clear History"
+								onPress={() => setHistory([])}
+							/>
+						</View>
+						<View style={styles.calculateStyles}>
+							<Button
+								title="Close"
+								onPress={() => setModalVisibility(false)}
+							/>
+						</View>
+					</View>
+				</View>
+			</Modal>
 		</View>
 	);
 }
 
 const styles = StyleSheet.create({
 	container: {
-		// backgroundColor: "grey",
+		textAlign: "center",
 	},
 	headerStyles: {
 		textAlign: "center",
